@@ -1,0 +1,11 @@
+services:
+  pedidos-front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pedidos-front
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

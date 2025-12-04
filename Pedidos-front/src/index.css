@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "tailwindcss/utilities";
+
+/* Aquí puedes agregar estilos personalizados más adelante, si quieres */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* Normal */
+#app {
+  transition: transform 0.5s ease;
+}
+
