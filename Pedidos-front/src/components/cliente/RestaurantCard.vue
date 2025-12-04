@@ -78,15 +78,13 @@ const props = defineProps({
 
 // Función para manejar la imagen
 const obtenerImagen = (restaurante) => {
-  // Prioridad: imagen_url > imagen > default
-  if (restaurante.imagen_url) {
-    return restaurante.imagen_url;
-  }
-  
+
   if (restaurante.imagen) {
     // Si la imagen es una ruta relativa, construir la URL completa
     if (restaurante.imagen.startsWith('restaurantes/')) {
-      return `http://localhost:8000/storage/${restaurante.imagen}`;
+      
+      return `http://localhost/api/catalogo/storage/${restaurante.imagen}`;
+
     }
     return restaurante.imagen;
   }

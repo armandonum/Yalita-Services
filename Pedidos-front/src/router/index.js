@@ -25,6 +25,11 @@ const routes = [
     component: PaymentView,
     meta: { requiresAuth: true }
   },
+  {
+  path: "/ordenes-offline",
+  name: "OrdersOffline",
+  component: () => import("@/views/OrdersOffline.vue")
+},
 
   // Rutas para dueños/restaurantes
   {

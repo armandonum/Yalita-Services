@@ -98,7 +98,7 @@ defineEmits(["incrementar", "decrementar", "agregar"])
 
 const imagenUrl = computed(() =>
   props.producto.imagen
-    ? `http://localhost:8000/storage/${props.producto.imagen}`
+    ?`http://localhost/api/catalogo/storage/${props.producto.imagen}` 
     : null
 )
 

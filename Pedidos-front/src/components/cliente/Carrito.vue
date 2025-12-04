@@ -154,15 +154,12 @@
   </div>
 </template>
 
-
 <script>
 import { useCarritoStore } from '@/stores/carritoStore';
 import { crearOrden } from "@/services/orderService";
 import { useNotification } from "@/composables/useNotification";
 
 const { push } = useNotification();
-
-
 
 export default {
   name: 'CarritoSidebar',
@@ -172,52 +169,61 @@ export default {
       default: true
     }
   },
+
   setup() {
     const carritoStore = useCarritoStore();
     return { carritoStore };
   },
+
   data() {
     return {
       carritoVisible: false
     };
   },
+
   computed: {
     total() {
       return this.carritoStore.subtotal + this.calcularEnvio();
     },
-    
+
     tooltipCarrito() {
       if (this.carritoStore.items.length === 0) {
         return 'Carrito vacío';
       }
-      
+
       const grupos = this.carritoStore.itemsPorRestaurante;
-      return Object.values(grupos).map(grupo => 
-        `${grupo.restaurante.nombre}: ${grupo.items.reduce((sum, item) => sum + item.cantidad, 0)} items`
-      ).join('\n');
+      return Object.values(grupos)
+        .map(grupo =>
+          `${grupo.restaurante.nombre}: ${grupo.items.reduce((sum, item) => sum + item.cantidad, 0)} items`
+        )
+        .join('\n');
     }
   },
+
   methods: {
     abrirCarrito() {
       this.carritoVisible = true;
     },
-    
+
     cerrarCarrito() {
       this.carritoVisible = false;
     },
-    
+
     incrementarCantidad(item) {
       this.carritoStore.actualizarCantidad(item.producto.id, item.cantidad + 1);
     },
-    
+
     decrementarCantidad(item) {
       this.carritoStore.actualizarCantidad(item.producto.id, item.cantidad - 1);
     },
-    
+
     eliminarItem(item) {
       this.carritoStore.eliminarProducto(item.producto.id);
     },
-    
+
+    /* ----------------------------------------------------------
+       MÉTODO COMPLETO — MANEJO SERVICIO CAÍDO
+    ---------------------------------------------------------- */
     async realizarPedido() {
       try {
         if (!this.carritoStore.items.length) {
@@ -234,39 +240,57 @@ export default {
           })),
         };
 
-        //console.log("📦 Payload enviado al backend:", JSON.stringify(orderPayload, null, 2));
-
         const order = await crearOrden(orderPayload);
+        this.carritoVisible = false;
+        console.log("Orden creada:", order);
+        console.log/"serrando carrito";
 
-        // 🟢 VACÍA EL CARRITO AQUÍ
+        // Limpiar el carrito
         this.carritoStore.limpiarCarrito();
 
-        // Redirigir a pantalla de pago
+        // Redirigir a pago
         this.$router.push({
           name: "Payment",
           query: { id: order.id }
         });
 
       } catch (error) {
-        //console.error("Error al crear la orden:", error);
+
+        // 1️⃣ Servicio apagado, sin respuesta
+        if (!error.response) {
+          this.carritoVisible = false;
+          console.log("Servicio de órdenes no disponible, redirigiendo a ordenes-offline");
+          this.$router.push("/ordenes-offline");
+          return;
+        }
+
+        // 2️⃣ Servicio en mantenimiento (503)
+        if (error.response.status === 503) {
+          this.$router.push("/ordenes-offline");
+          return;
+        }
+
+        // 3️⃣ Otros errores normales
         push({
           message: "Error al procesar el pedido. Intenta nuevamente.",
           type: "error",
-          duration: 3000
+          duration: 1000
         });
       }
     },
-    
+
     calcularEnvio() {
       if (this.carritoStore.subtotal === 0) return 0;
-      
+
       const numRestaurantes = Object.keys(this.carritoStore.itemsPorRestaurante).length;
       const envioBase = 5;
       const envioAdicional = 5;
-      
-      return numRestaurantes === 1 ? envioBase : envioBase + (envioAdicional * (numRestaurantes - 1));
+
+      return numRestaurantes === 1
+        ? envioBase
+        : envioBase + (envioAdicional * (numRestaurantes - 1));
     },
-    
+
     formatoMoneda(valor) {
       return `Bs. ${parseFloat(valor).toFixed(2)}`;
     }

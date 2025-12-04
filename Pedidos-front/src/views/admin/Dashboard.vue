@@ -237,7 +237,7 @@ export default {
           {
             data: Object.values(estados),
             backgroundColor: [
-              '#EF4444',
+              'green',
               '#10B981',
               '#F59E0B',
               '#6B7280' 

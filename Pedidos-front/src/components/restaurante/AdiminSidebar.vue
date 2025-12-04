@@ -58,7 +58,7 @@
       <nav class="overflow-y-auto flex-1 p-4">
         <ul class="space-y-2">
           <!-- Dashboard -->
-          <li>
+          <!-- <li>
             <router-link
               to="/dashboard"
               class="flex gap-4 items-center px-4 py-3 rounded-xl transition-all hover:bg-gray-100 group"
@@ -68,7 +68,7 @@
               <i class="w-6 text-center text-red-500 fas fa-tachometer-alt"></i>
               <span :class="{ 'opacity-0': isCollapsed }">Dashboard</span>
             </router-link>
-          </li>
+          </li> -->
 
           <!-- Mis Restaurantes -->
           <li>
@@ -83,7 +83,7 @@
           </li>
 
           <!-- Pedidos -->
-          <li>
+          <!-- <li>
             <router-link
               to="/pedidos"
               class="flex justify-between items-center px-4 py-3 rounded-xl transition-all hover:bg-gray-100 group"
@@ -100,7 +100,7 @@
                 {{ pedidosPendientes }}
               </span>
             </router-link>
-          </li>
+          </li> -->
 
           <!-- Productos -->
           <li>
